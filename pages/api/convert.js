@@ -1,7 +1,7 @@
 // backend/pages/api/convert.js
 
 // 만약 node‑fetch 설치했다면 import 가능
-const fetch = require("node‑fetch");
+import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
