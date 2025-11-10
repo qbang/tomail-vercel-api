@@ -2,7 +2,10 @@
   "name": "backend-api",
   "version": "1.0.0",
   "dependencies": {
-    "node-fetch": "^2.7.0"
+    "next": "^16.0.1",
+    "node-fetch": "^2.7.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "scripts": {
     "dev": "next dev",
