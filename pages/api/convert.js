@@ -1,7 +1,7 @@
 // pages/api/convert.js
 
 // 서버 사이드에서만 실행되므로 require 방식도 괜찮습니다.
-const fetch = require("node‑fetch");  // 혹은 require("node-fetch"); 하이픈 꼭 일반 문자로!
+import fetch from "node‑fetch"
 
 export default async function handler(req, res) {
   // POST 요청만 처리
