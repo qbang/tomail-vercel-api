@@ -1,21 +1,24 @@
-// pages/api/convert.js
+// app/api/convert/route.js
+import fetch from 'node-fetch';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  }
-
+export async function POST(req) {
   try {
-    const { text } = req.body;
+    const { text } = await req.json();
+
     if (!text || typeof text !== "string") {
-      return res.status(400).json({ error: "Please provide a valid text string in request body." });
+      return new Response(
+        JSON.stringify({ error: "Please provide a valid text string in request body." }),
+        { status: 400 }
+      );
     }
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) {
       console.error("Missing OPENAI_API_KEY environment variable.");
-      return res.status(500).json({ error: "Server configuration error: API key is missing." });
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: API key is missing." }),
+        { status: 500 }
+      );
     }
 
     const payload = {
@@ -28,7 +31,7 @@ export default async function handler(req, res) {
       temperature: 0.7
     };
 
-    // 내장 fetch 사용
+    // OpenAI API 호출
     const apiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -41,16 +44,30 @@ export default async function handler(req, res) {
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();
       console.error("OpenAI API responded with error:", errorText);
-      return res.status(apiResponse.status).json({ error: "OpenAI API call failed." });
+      return new Response(
+        JSON.stringify({ error: "OpenAI API call failed.", details: errorText }),
+        { status: apiResponse.status }
+      );
     }
 
     const data = await apiResponse.json();
     const result = data.choices?.[0]?.message?.content?.trim() || "";
 
-    return res.status(200).json({ result });
+    return new Response(JSON.stringify({ result }), { status: 200 });
 
   } catch (error) {
     console.error("Exception during API handling:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    return new Response(
+      JSON.stringify({ error: "Internal server error." }),
+      { status: 500 }
+    );
   }
+}
+
+// GET 요청은 허용하지 않음
+export async function GET() {
+  return new Response(
+    JSON.stringify({ error: "Method GET Not Allowed" }),
+    { status: 405, headers: { Allow: 'POST' } }
+  );
 }
