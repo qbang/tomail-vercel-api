@@ -68,3 +68,4 @@ export async function GET() {
     { status: 405, headers: { Allow: 'POST' } }
   );
 }
+
