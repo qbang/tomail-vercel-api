@@ -1,6 +1,3 @@
-// app/api/convert/route.js
-import fetch from 'node-fetch';
-
 export async function POST(req) {
   try {
     const { text } = await req.json();
